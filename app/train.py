@@ -26,7 +26,7 @@ def main(args):
     )
     test_dataset = TestImageDataset(img_dir=args.test_img_dir)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
     model = UNetWithClassHead(n_channels=3, n_classes=args.num_classes,
                               n_segmentation_classes=args.num_segmentation_classes)
@@ -70,7 +70,7 @@ def main(args):
             images = images.to(device)
 
             # 预测分割结果
-            seg_output, _ = model(images)
+            seg_output, class_output = model(images)
 
             # 处理分割结果
             predicted_mask = torch.argmax(seg_output, dim=1).squeeze(0).cpu().numpy()
@@ -81,7 +81,7 @@ def main(args):
             save_mask(predicted_mask, save_path)
 
             # 将文件名和标签信息加入到 CSV 列表中
-            predictions.append({'filename': img_filename, 'label': 1})  # 假设分类标签为 1
+            predictions.append({'case': img_filename, 'prob': class_output.squeeze(0).cpu().numpy()[0]})
 
     # 保存 label.csv
     save_csv(predictions, args.output_dir, args.csv_filename)
@@ -92,6 +92,8 @@ def main(args):
 
 # 保存分割掩码为 PNG 图像
 def save_mask(mask, path):
+    if len(mask.shape) > 2:
+        mask = mask.squeeze()
     mask_img = Image.fromarray(mask.astype('uint8'))
     mask_img.save(path)
 
@@ -120,7 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_label_dir', type=str, default="tcdata/train/label")
     parser.add_argument('--train_label_csv', type=str, default="tcdata/train/label.csv")
     parser.add_argument('--test_img_dir', type=str, default="tcdata/test/img")
-    parser.add_argument('--test_label_dir', type=str, default="./submit")
+    parser.add_argument('--output_dir', type=str, default="./submit")
     parser.add_argument('--csv_filename', type=str, default="label.csv")
     parser.add_argument('--batch-size', type=int, default=4)
     parser.add_argument('--num_classes', type=int, default=2)
