@@ -8,6 +8,16 @@ segmentation_loss_fn = nn.CrossEntropyLoss()
 classification_loss_fn = nn.CrossEntropyLoss()
 
 
+# Dice Loss function for segmentation
+def dice_loss(pred, target, smooth=1e-6):
+    pred = torch.sigmoid(pred)  # Apply sigmoid if output is not already a probability map
+    # Flatten the tensors to compute intersection and union
+    pred_flat = pred.view(-1)
+    target_flat = target.view(-1)
+    intersection = (pred_flat * target_flat).sum()
+    return 1 - ((2. * intersection + smooth) / (pred_flat.sum() + target_flat.sum() + smooth))
+
+
 def combined_loss(seg_output, class_output, target_segmentation, target_class, alpha=1.0, beta=1.0):
     """
     Compute combined loss for segmentation and classification.
