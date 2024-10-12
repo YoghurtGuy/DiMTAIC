@@ -19,12 +19,13 @@ def main(args):
     device = torch.device(args.device)
 
     # Load datasets
+    train_dir=os.path.join(args.dataset_dir, 'train')
     train_dataset = TrainImageDataset(
-        img_dir=args.train_img_dir,
-        label_dir=args.train_label_dir,
-        label_csv=args.train_label_csv,
+        img_dir=os.path.join(train_dir, 'img'),
+        label_dir=os.path.join(train_dir, 'label'),
+        label_csv=os.path.join(train_dir, 'label.csv'),
     )
-    test_dataset = TestImageDataset(img_dir=args.test_img_dir)
+    test_dataset = TestImageDataset(img_dir=os.path.join(os.path.join(args.dataset_dir, 'test'),'img'))
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
@@ -84,7 +85,7 @@ def main(args):
             predictions.append({'case': img_filename, 'prob': class_output.squeeze(0).cpu().numpy()[0]})
 
     # 保存 label.csv
-    save_csv(predictions, args.output_dir, args.csv_filename)
+    save_csv(predictions, args.output_dir, "label.csv")
 
     # 将结果压缩为 submit.zip
     zip_output(args.output_dir, 'submit.zip')
@@ -117,13 +118,9 @@ def zip_output(output_dir, zip_filename):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--device', type=str, default='mps')
-    parser.add_argument('--train_img_dir', type=str, default="tcdata/train/img")
-    parser.add_argument('--train_label_dir', type=str, default="tcdata/train/label")
-    parser.add_argument('--train_label_csv', type=str, default="tcdata/train/label.csv")
-    parser.add_argument('--test_img_dir', type=str, default="tcdata/test/img")
+    parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--dataset_dir', type=str, default="../tcdata")
     parser.add_argument('--output_dir', type=str, default="./submit")
-    parser.add_argument('--csv_filename', type=str, default="label.csv")
     parser.add_argument('--batch-size', type=int, default=4)
     parser.add_argument('--num_classes', type=int, default=2)
     parser.add_argument('--num_segmentation_classes', type=int, default=1)
