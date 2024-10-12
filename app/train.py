@@ -31,11 +31,13 @@ def main(args):
 
     # Train
     model.train()
+    model.to(device)
     total_loss = 0
 
     for images, target_segmentation, target_class in tqdm(train_loader):
         images = images.to(device)
-        labels = target_segmentation.to(device)
+        target_segmentation = target_segmentation.to(device)
+        target_class = target_class.to(device)
 
         # 前向传播
         seg_output, class_output = model(images)

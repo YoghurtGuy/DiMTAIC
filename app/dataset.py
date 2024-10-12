@@ -18,7 +18,7 @@ import pandas as pd
 default_transform = transforms.Compose([
     transforms.Resize((256, 256)),  # 调整图像大小
     transforms.ToTensor(),  # 将图像转换为 Tensor
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # 标准化
+    # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # 标准化
 ])
 
 
