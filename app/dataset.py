@@ -55,7 +55,7 @@ class TrainImageDataset(Dataset):
         # 如果定义了变换操作，则对图像和标签同时进行变换
         if self.transform:
             image = self.transform(image)
-            target_segmentation = self.transform(label)
+            target_segmentation = self.transform(target_segmentation)
 
         return image, target_segmentation, target_class
 

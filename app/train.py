@@ -35,7 +35,7 @@ def main(args):
 
     for images, target_segmentation, target_class in tqdm(train_loader):
         images = images.to(device)
-        labels = seg.to(device)
+        labels = target_segmentation.to(device)
 
         # 前向传播
         seg_output, class_output = model(images)
