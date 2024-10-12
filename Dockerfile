@@ -3,7 +3,7 @@ FROM registry.cn-shanghai.aliyuncs.com/tcc-public/pytorch:1.12-py3.9.12-cuda11.3
 
 
 # 如有安装其他软件的需求
-RUN pip3 install numpy,pandas --index-url=http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com
+RUN pip3 install numpy pandas --index-url=http://mirrors.aliyun.com/pypi/simple/ --trusted-host=mirrors.aliyun.com
 
 # 复制代码到镜像仓库
 COPY app /app
