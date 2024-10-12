@@ -9,9 +9,9 @@ from PIL import Image
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from app.dataset import TrainImageDataset, TestImageDataset
-from app.loss import combined_loss
-from app.model import UNetWithClassHead
+from dataset import TrainImageDataset, TestImageDataset
+from loss import combined_loss
+from model import UNetWithClassHead
 
 
 def main(args):
